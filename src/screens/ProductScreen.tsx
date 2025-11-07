@@ -4,6 +4,8 @@ import React from 'react';
 import { View, Text, FlatList, StyleSheet, SafeAreaView } from 'react-native';
 import ProductCard from '../components/ProductCard'; 
 // Asumsi ProductCard disimpan di folder components
+ 
+//naga uy
 
 // --- IMPOR GAMBAR LOKAL DARI FOLDER ASSETS ---
 // CATATAN: Pastikan Anda mengganti path "../assets/images/..." 
