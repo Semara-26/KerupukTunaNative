@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Image } from "react-native";
-import logo from "../assets/images/favicon.jpg";
+import logo from "../assets/images/logo-tuna.png";
 
 const BrandComponent = () => {
   return (
