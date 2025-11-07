@@ -1,10 +1,12 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-
+import { View, StyleSheet, Image } from "react-native";
+import logo from "../assets/images/favicon.jpg";
 
 const BrandComponent = () => {
   return (
-    <View style={styles.brandContainer}/>
+    <View style={styles.brandContainer}>
+        <Image source={logo} style={styles.logo} />
+    </View>
   );
 };
 
@@ -14,6 +16,11 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 80,
+  },
+  logo: {
+    width: 80,
+    height: 80,
+    borderRadius: 40, // Bikin bulat
   },
 });
 

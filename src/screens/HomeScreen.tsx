@@ -12,12 +12,12 @@ const HomeScreen = () => {
           <BrandComponent />
         </View>
         <View style={styles.navigation}>
-          <NavigationItemComponent title = 'Home' icon= 'home-outline'/>
+          {/* <NavigationItemComponent title = 'Home' icon= 'home-outline'/>
           <NavigationItemComponent title = 'Product' icon='bag-handle-outline'/>
           <NavigationItemComponent title = 'Contact Us' icon='call-outline'/>
-          <NavigationItemComponent title = 'Order' icon='cart-outline'/>
-          <NavigationItemComponent title = 'Gallery' icon= 'images-outline'/>
-          <NavigationItemComponent title = 'Service' icon = 'construct-outline'/>
+          <NavigationItemComponent title = 'Order' icon='cart-outline'/> */}
+          <NavigationItemComponent title = 'Reseller' icon= 'people-outline'/>
+          <NavigationItemComponent title = 'Recipe' icon = 'book-outline'/>
           <NavigationItemComponent title = 'About' icon = 'information-circle-outline'/>
         </View>
         <View style={styles.order}>
