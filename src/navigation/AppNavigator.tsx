@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ResellerScreen from '../screens/ResellerScreen';
 import RecipeScreen from '../screens/RecipeScreen';
 import AboutScreen from '../screens/AboutScreen';
+import LoginScreen from '../screens/LoginScreen';
 
 import MainTabs from './MainTabs';
 
@@ -11,8 +12,13 @@ const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
   return (
-    <Stack.Navigator>
-      {/* Screen pertama adalah 'MainTabs' (Bottom Tab) */}
+    <Stack.Navigator initialRouteName="Login">
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{ headerShown: false }}
+      />
+      
       <Stack.Screen
         name="MainTabs"
         component={MainTabs}
