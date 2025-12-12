@@ -86,13 +86,13 @@ const HomeScreen = () => {
           <TouchableOpacity style={styles.profileButton}>
             <Image
               // Pastikan nama file gambarnya benar sesuai folder assets kamu
-              source={require('../assets/images/Original.png')} // Ganti profile pic dummy
+              source={require('../assets/images/favicon.jpg')} 
               style={styles.profileImage}
             />
           </TouchableOpacity>
         </View>
 
-        {/* --- SEARCH BAR --- */}
+        {/* search bar */}
         <View style={styles.searchContainer}>
           <Ionicons
             name="search-outline"
@@ -107,7 +107,7 @@ const HomeScreen = () => {
           />
         </View>
 
-        {/* --- BANNER --- */}
+        {/* banner */}
         <View style={styles.bannerContainer}>
           <View style={styles.banner}>
             <View style={{ flex: 1 }}>
@@ -118,7 +118,7 @@ const HomeScreen = () => {
               </TouchableOpacity>
             </View>
             <Image
-              source={require('../assets/images/RasaSayange.png')} // Ganti gambar
+              source={require('../assets/images/RasaSayange.png')}
               style={styles.bannerImage}
             />
           </View>
