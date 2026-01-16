@@ -1,10 +1,12 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import ResellerScreen from '../screens/ResellerScreen';
+import LocationScreen from '../screens/LocationScreen';
 import RecipeScreen from '../screens/RecipeScreen';
 import AboutScreen from '../screens/AboutScreen';
 import LoginScreen from '../screens/LoginScreen';
+import ProductDetailScreen from '../screens/ProductDetailScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 import MainTabs from './MainTabs';
 
@@ -18,7 +20,7 @@ const AppNavigator = () => {
         component={LoginScreen}
         options={{ headerShown: false }}
       />
-      
+
       <Stack.Screen
         name="MainTabs"
         component={MainTabs}
@@ -26,9 +28,9 @@ const AppNavigator = () => {
       />
 
       <Stack.Screen
-        name="Reseller"
-        component={ResellerScreen}
-        options={{ title: 'Info Reseller' }}
+        name="Location"
+        component={LocationScreen}
+        options={{ title: 'Alamat' }}
       />
       <Stack.Screen
         name="Recipe"
@@ -39,6 +41,16 @@ const AppNavigator = () => {
         name="About"
         component={AboutScreen}
         options={{ title: 'Tentang Kami' }}
+      />
+      <Stack.Screen
+        name="ProductDetail"
+        component={ProductDetailScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

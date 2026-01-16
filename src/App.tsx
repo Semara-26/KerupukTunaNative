@@ -1,16 +1,17 @@
 import React from 'react';
 
 import AppNavigator from './navigation/AppNavigator'; // Import navigator utama kita
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+// import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
+import { CartProvider } from './context/CartContext';
 
 const App = () => {
   return (
-    <SafeAreaProvider>
+    <CartProvider>
       <NavigationContainer>
         <AppNavigator />
       </NavigationContainer>
-    </SafeAreaProvider>
+    </CartProvider>
   );
 };
 

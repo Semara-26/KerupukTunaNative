@@ -9,50 +9,55 @@ import {
   TouchableOpacity,
   StatusBar,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
-// Tambahkan <any> di sini untuk bypass error TypeScript sementara
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 
-// Import Komponen Modal Promo Baru
 import PromoModal from '../components/PromoModal';
 
-// Data Dummy Produk (Bisa diganti data asli nanti)
-const POPULAR_PRODUCTS = [
-  {
-    id: 1,
-    name: 'Tuna Original',
-    price: 'Rp 15.000',
-    image: require('../assets/images/Original.png'),
-  },
-  {
-    id: 2,
-    name: 'Tuna Pedas',
-    price: 'Rp 18.000',
-    image: require('../assets/images/Pedes.png'),
-  },
-  {
-    id: 3,
-    name: 'Rasa Sayange',
-    price: 'Rp 20.000',
-    image: require('../assets/images/RasaSayange.png'),
-  },
-];
+// --- KONFIGURASI API ---
+const API_URL = 'http://10.0.2.2:3000';
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  image_url: string;
+  description?: string;
+}
 
 const HomeScreen = () => {
-  // FIX: Kita kasih <any> biar TypeScript tidak protes soal .navigate()
   const navigation = useNavigation<any>();
   const [modalVisible, setModalVisible] = useState(false);
 
-  // Efek: Munculkan modal promo saat halaman dibuka
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    // Kasih delay dikit biar smooth
+    fetchProducts();
+
     setTimeout(() => {
       setModalVisible(true);
     }, 1000);
   }, []);
 
-  // Komponen Helper untuk Menu Grid
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/products`);
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      console.error('Gagal ambil data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatRupiah = (price: number) => {
+    return `Rp ${price.toLocaleString('id-ID')}`;
+  };
+
   const MenuButton = ({ title, icon, target }: any) => (
     <TouchableOpacity
       style={styles.menuItem}
@@ -69,7 +74,6 @@ const HomeScreen = () => {
     <View style={styles.mainContainer}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-      {/* --- MENGGUNAKAN KOMPONEN PROMO MODAL BARU --- */}
       <PromoModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
@@ -77,22 +81,26 @@ const HomeScreen = () => {
       />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* --- HEADER SECTION --- */}
+        {/* --- HEADER --- */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.greeting}>Halo, Semara 👋</Text>
+            <Text style={styles.greeting}>Halo, User 👋</Text>
             <Text style={styles.location}>Denpasar, Bali</Text>
           </View>
-          <TouchableOpacity style={styles.profileButton}>
+
+          {/* LOGO PROFIL JADI TOMBOL */}
+          <TouchableOpacity
+            style={styles.profileButton}
+            onPress={() => navigation.navigate('Profile')} 
+          >
             <Image
-              // Pastikan nama file gambarnya benar sesuai folder assets kamu
-              source={require('../assets/images/favicon.jpg')} 
+              source={require('../assets/images/favicon.jpg')}
               style={styles.profileImage}
             />
           </TouchableOpacity>
         </View>
 
-        {/* search bar */}
+        {/* --- SEARCH --- */}
         <View style={styles.searchContainer}>
           <Ionicons
             name="search-outline"
@@ -107,7 +115,7 @@ const HomeScreen = () => {
           />
         </View>
 
-        {/* banner */}
+        {/* --- BANNER --- */}
         <View style={styles.bannerContainer}>
           <View style={styles.banner}>
             <View style={{ flex: 1 }}>
@@ -124,10 +132,11 @@ const HomeScreen = () => {
           </View>
         </View>
 
-        {/* --- GRID MENU (LEBIH LENGKAP) --- */}
-        {/* <Text style={styles.sectionTitle}>Kategori</Text> */}
+        {/* --- KATEGORI --- */}
+        <Text style={styles.sectionTitle}>Kategori</Text>
         <View style={styles.gridContainer}>
           <MenuButton title="Resep" icon="restaurant-outline" target="Recipe" />
+          {/* Arahkan Favorit ke Product list dulu sebagai placeholder */}
           <MenuButton title="Favorit" icon="heart-outline" target="Product" />
           <MenuButton title="Lokasi" icon="map-outline" target="About" />
           <MenuButton
@@ -137,7 +146,7 @@ const HomeScreen = () => {
           />
         </View>
 
-        {/* --- POPULAR PRODUCTS (HORIZONTAL SCROLL) --- */}
+        {/* --- PALING LARIS (DARI API) --- */}
         <View style={styles.popularHeader}>
           <Text style={styles.sectionTitle}>Paling Laris 🔥</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Product')}>
@@ -145,25 +154,45 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <FlatList
-          horizontal
-          data={POPULAR_PRODUCTS}
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={item => item.id.toString()}
-          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.productCard}>
-              <Image source={item.image} style={styles.productImage} />
-              <Text style={styles.productName}>{item.name}</Text>
-              <Text style={styles.productPrice}>{item.price}</Text>
-              <View style={styles.addButton}>
-                <Ionicons name="add" size={20} color="white" />
-              </View>
-            </TouchableOpacity>
-          )}
-        />
+        {loading ? (
+          <ActivityIndicator
+            size="large"
+            color="#0077b6"
+            style={{ marginTop: 20 }}
+          />
+        ) : (
+          <FlatList
+            horizontal
+            data={products}
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={item => item.id.toString()}
+            contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.productCard}
+                onPress={() =>
+                  navigation.navigate('ProductDetail', { product: item })
+                }
+              >
+                <Image
+                  source={{ uri: `${API_URL}/images/${item.image_url}` }}
+                  style={styles.productImage}
+                />
+                <Text style={styles.productName} numberOfLines={1}>
+                  {item.name}
+                </Text>
+                <Text style={styles.productPrice}>
+                  {formatRupiah(item.price)}
+                </Text>
+                <View style={styles.addButton}>
+                  <Ionicons name="add" size={20} color="white" />
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+        )}
 
-        {/* --- SECTION BARU: PAKET HEMAT (MENGISI SPACE KOSONG) --- */}
+        {/* --- PAKET HEMAT --- */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Paket Hemat Keluarga 👨‍👩‍👧‍👦</Text>
           <TouchableOpacity style={styles.bundleCard}>
@@ -176,13 +205,12 @@ const HomeScreen = () => {
               </View>
             </View>
             <Image
-              source={require('../assets/images/Original.png')} // Gambar dummy
+              source={require('../assets/images/Original.png')}
               style={styles.bundleImage}
             />
           </TouchableOpacity>
         </View>
 
-        {/* Spacer bawah biar scroll nggak mentok */}
         <View style={{ height: 30 }} />
       </ScrollView>
     </View>
@@ -194,7 +222,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  // Header
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -225,7 +252,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  // Search
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -241,7 +267,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     color: '#333',
   },
-  // Banner
   bannerContainer: {
     paddingHorizontal: 24,
     marginBottom: 24,
@@ -280,10 +305,9 @@ const styles = StyleSheet.create({
   bannerImage: {
     width: 100,
     height: 100,
-    resizeMode: 'cover', // Diubah jadi cover biar penuh
-    borderRadius: 12, // Ditambahkan radius biar smooth
+    resizeMode: 'cover',
+    borderRadius: 12,
   },
-  // Categories
   sectionTitle: {
     fontSize: 18,
     fontFamily: 'Poppins-Bold',
@@ -293,7 +317,7 @@ const styles = StyleSheet.create({
   },
   gridContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Kembali ke space-between karena item genap (4)
+    justifyContent: 'space-between',
     paddingHorizontal: 24,
     marginBottom: 30,
   },
@@ -304,7 +328,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 50,
     height: 50,
-    backgroundColor: '#E6F4FA', // Biru sangat muda
+    backgroundColor: '#E6F4FA',
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
@@ -315,7 +339,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     color: '#555',
   },
-  // Popular
   popularHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -334,7 +357,6 @@ const styles = StyleSheet.create({
     width: 150,
     padding: 12,
     marginRight: 16,
-    // Shadow
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -345,11 +367,11 @@ const styles = StyleSheet.create({
   },
   productImage: {
     width: '100%',
-    height: 120, // Tinggi diperbesar sedikit biar proporsional
+    height: 120,
     borderRadius: 12,
     marginBottom: 8,
-    resizeMode: 'cover', // PENTING: Ganti ke cover agar gambar penuh
-    backgroundColor: '#F5F5F5', // Warna background biar rapi saat loading/kosong
+    resizeMode: 'cover', // Style rapi
+    backgroundColor: '#F5F5F5',
   },
   productName: {
     fontSize: 14,
@@ -373,12 +395,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  // Bundle / Paket Hemat Section
   sectionContainer: {
     marginTop: 10,
   },
   bundleCard: {
-    backgroundColor: '#FFF0E6', // Oranye sangat muda biar beda dikit
+    backgroundColor: '#FFF0E6',
     marginHorizontal: 24,
     borderRadius: 16,
     padding: 20,
@@ -416,13 +437,13 @@ const styles = StyleSheet.create({
   bundlePrice: {
     fontSize: 16,
     fontFamily: 'Poppins-Bold',
-    color: '#E65100', // Warna oranye tua harga
+    color: '#E65100',
   },
   bundleImage: {
     width: 80,
     height: 80,
-    resizeMode: 'cover', // Cover biar penuh
-    borderRadius: 12, // Rounded
+    resizeMode: 'cover',
+    borderRadius: 12,
   },
 });
 

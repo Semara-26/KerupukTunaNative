@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import { useCart } from '../context/CartContext';
 
 // Import semua screen untuk Tab
 import HomeScreen from '../screens/HomeScreen';
@@ -11,6 +12,7 @@ import ContactUsScreen from '../screens/ContactUsScreen';
 const Tab = createBottomTabNavigator();
 
 const MainTabs = () => {
+  const { totalItems } = useCart();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -47,7 +49,22 @@ const MainTabs = () => {
       {/* Ini adalah 4 Tab utama kita */}
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Product" component={ProductScreen} />
-      <Tab.Screen name="Order" component={OrderScreen} />
+      <Tab.Screen
+        name="Order"
+        component={OrderScreen}
+        options={{
+          title: 'Order',
+          // LOGIKA BADGE:
+          // Jika totalItems > 0, tampilkan angkanya. Jika 0, sembunyikan badge (undefined).
+          tabBarBadge: totalItems > 0 ? totalItems : undefined,
+          tabBarBadgeStyle: {
+            backgroundColor: '#E65100', 
+            color: 'white',
+            fontSize: 12,
+            fontWeight: 'bold',
+          },
+        }}
+      />
       <Tab.Screen name="Contact Us" component={ContactUsScreen} />
     </Tab.Navigator>
   );

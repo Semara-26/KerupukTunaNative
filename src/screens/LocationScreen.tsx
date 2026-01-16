@@ -1,12 +1,12 @@
 import React from 'react';
 import {Text, StyleSheet, View} from 'react-native';
 
-const ResepScreen = () => {
+const LocationScreen = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Halaman Reseller</Text>
+      <Text style={styles.text}>Alamat</Text>
       <Text style={styles.subtext}>
-        Nanti di sini kita bisa nampilin detail reseller
+        Jl. Ikan Tuna No. 26, Denpasar, Bali
       </Text>
     </View>
   );
@@ -31,4 +31,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ResepScreen;
+export default LocationScreen;

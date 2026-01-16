@@ -38,12 +38,10 @@ const PromoModal = ({visible, onClose, onClaim}: PromoModalProps) => {
             </TouchableOpacity>
           </View>
 
-          {/* Gambar Clean tanpa Background Abu-abu */}
           <Image
-            // Pastikan menggunakan gambar promo yang paling bagus
             source={require('../assets/images/RasaSayange.png')} 
             style={styles.image}
-            resizeMode="cover" // Pakai cover biar gambar mengisi frame rounded-nya
+            resizeMode="cover" 
           />
 
           {/* Deskripsi */}

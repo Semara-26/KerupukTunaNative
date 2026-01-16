@@ -6,7 +6,6 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 const ProductCard = ({ product }) => {
     return (
         <TouchableOpacity style={styles.card}>
-            {/* Ganti dengan URL gambar kerupuk tuna atau require lokal image */}
             <Image 
                 style={styles.image} 
                 source={ product.imageUri } 
@@ -28,7 +27,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 8,
         margin: 10,
-        // Untuk tampilan grid 2 kolom
         width: '45%', 
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -54,11 +52,10 @@ const styles = StyleSheet.create({
     },
     price: {
         fontSize: 14,
-        color: '#ff6347', // Warna untuk harga
+        color: '#ff6347', 
         fontWeight: '600',
     },
 });
 
 export default ProductCard;
 
-// naga uy 

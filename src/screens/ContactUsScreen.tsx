@@ -82,7 +82,7 @@ const ContactUsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9f9f9', // Latar belakang agak abu
+    backgroundColor: '#f9f9f9', 
   },
   headerContainer: {
     padding: 20,
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 26,
-    fontFamily: 'Poppins-Bold', // Pastikan font Poppins-Bold ada
+    fontFamily: 'Poppins-Bold', 
     color: '#333',
   },
   headerSubtitle: {
@@ -111,12 +111,12 @@ const styles = StyleSheet.create({
     borderBottomColor: '#f0f0f0',
   },
   textContainer: {
-    flex: 1, // Bikin teks ambil sisa ruang
+    flex: 1, 
     marginLeft: 15,
   },
   contactTitle: {
     fontSize: 16,
-    fontFamily: 'Poppins-Medium', // Pastikan font Poppins-Medium ada
+    fontFamily: 'Poppins-Medium', 
     color: '#333',
   },
   contactValue: {
