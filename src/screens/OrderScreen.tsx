@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,14 +9,18 @@ import {
   SafeAreaView,
   StatusBar,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { useCart } from '../context/CartContext';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import { useNavigation } from '@react-navigation/native';
 
 const API_URL = 'http://10.0.2.2:3000';
 
 const OrderScreen = () => {
-  const { cartItems, updateQuantity, removeFromCart } = useCart();
+  const navigation = useNavigation<any>();
+  const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
+  const [loading, setLoading] = useState(false); 
 
   const grandTotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -27,21 +31,64 @@ const OrderScreen = () => {
     return `Rp ${price.toLocaleString('id-ID')}`;
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (cartItems.length === 0) {
       Alert.alert('Keranjang Kosong', 'Yuk tambah kerupuk dulu!');
       return;
     }
 
-    Alert.alert(
-      'Checkout Berhasil',
-      'Pesananmu sedang diproses oleh sistem (Simulasi).',
-    );
+    setLoading(true);
+
+    try {
+      const payload = {
+        customer_name: 'Semara',
+        total_price: grandTotal,
+        items: cartItems,
+      };
+
+      const response = await fetch(`${API_URL}/api/checkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        Alert.alert(
+          'Sukses!',
+          `Pesanan berhasil dibuat (ID: ${result.orderId}). Terima kasih!`,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                clearCart(); 
+                navigation.navigate('Home');
+              },
+            },
+          ],
+        );
+      } else {
+        Alert.alert(
+          'Gagal',
+          result.error || 'Terjadi kesalahan saat checkout.',
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert(
+        'Error',
+        'Gagal terhubung ke server. Pastikan backend jalan.',
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Alert konfirmasi hapus biar ga kepencet
   const confirmDelete = (id: number, name: string) => {
-    Alert.alert('Hapus Item', `Yakin mau menghapus ${name} dari keranjang?`, [
+    Alert.alert('Hapus Item', `Yakin mau menghapus ${name}?`, [
       { text: 'Batal', style: 'cancel' },
       {
         text: 'Hapus',
@@ -76,24 +123,18 @@ const OrderScreen = () => {
                 source={{ uri: `${API_URL}/images/${item.image_url}` }}
                 style={styles.itemImage}
               />
-
-              {/* Detail Item */}
               <View style={styles.itemDetails}>
                 <View style={styles.topRow}>
                   <Text style={styles.itemName} numberOfLines={1}>
                     {item.name}
                   </Text>
-                  {/* Tombol Hapus */}
                   <TouchableOpacity
                     onPress={() => confirmDelete(item.id, item.name)}
                   >
                     <Ionicons name="trash-outline" size={20} color="#FF4444" />
                   </TouchableOpacity>
                 </View>
-
                 <Text style={styles.itemPrice}>{formatRupiah(item.price)}</Text>
-
-                {/* Kontrol Kuantitas */}
                 <View style={styles.qtyContainer}>
                   <TouchableOpacity
                     style={styles.qtyBtn}
@@ -101,16 +142,13 @@ const OrderScreen = () => {
                   >
                     <Ionicons name="remove" size={16} color="#333" />
                   </TouchableOpacity>
-
                   <Text style={styles.qtyText}>{item.quantity}</Text>
-
                   <TouchableOpacity
                     style={styles.qtyBtn}
                     onPress={() => updateQuantity(item.id, 'plus')}
                   >
                     <Ionicons name="add" size={16} color="#333" />
                   </TouchableOpacity>
-
                   <Text style={styles.subtotalText}>
                     Total: {formatRupiah(item.price * item.quantity)}
                   </Text>
@@ -121,18 +159,23 @@ const OrderScreen = () => {
         />
       )}
 
-      {/* Footer Checkout */}
       {cartItems.length > 0 && (
         <View style={styles.footer}>
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Total Pembayaran</Text>
             <Text style={styles.totalValue}>{formatRupiah(grandTotal)}</Text>
           </View>
+
           <TouchableOpacity
-            style={styles.checkoutButton}
+            style={[styles.checkoutButton, loading && { opacity: 0.7 }]}
             onPress={handleCheckout}
+            disabled={loading}
           >
-            <Text style={styles.checkoutText}>Checkout Sekarang</Text>
+            {loading ? (
+              <ActivityIndicator size="small" color="#FFF" />
+            ) : (
+              <Text style={styles.checkoutText}>Checkout Sekarang</Text>
+            )}
           </TouchableOpacity>
         </View>
       )}
@@ -177,7 +220,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 12,
     marginBottom: 15,
-    elevation: 2, // Shadow dikit biar pop-up
+    elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -235,7 +278,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Poppins-Bold',
     color: '#0077b6',
-    marginLeft: 'auto', // Dorong ke kanan mentok
+    marginLeft: 'auto',
   },
   footer: {
     position: 'absolute',

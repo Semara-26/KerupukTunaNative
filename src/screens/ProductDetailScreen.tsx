@@ -52,8 +52,8 @@ const ProductDetailScreen = () => {
       'Berhasil!', 
       `${quantity}x ${product.name} telah masuk keranjang.`,
       [
-        {text: 'Lanjut Belanja', onPress: () => {}}, // Tetap di halaman ini
-        {text: 'Lihat Keranjang', onPress: () => navigation.navigate('Order')}, // Opsi langsung ke cart
+        {text: 'Lanjut Belanja', onPress: () => {}}, 
+        {text: 'Lihat Keranjang', onPress: () => navigation.navigate('MainTabs', {screen: 'Order'})}, 
       ]
     );
   };

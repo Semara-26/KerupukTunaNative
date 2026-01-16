@@ -15,6 +15,7 @@ interface CartContextType {
   addToCart: (item: CartItem) => void;
   removeFromCart: (id: number) => void;
   updateQuantity: (id: number, type: 'plus' | 'minus') => void;
+  clearCart: () => void;
   totalItems: number;
 }
 
@@ -61,11 +62,24 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
   // Hitung total semua barang untuk badge (misal: 2 Tuna + 1 Pedas = 3 items)
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-   <CartContext.Provider value={{cartItems, addToCart, removeFromCart, updateQuantity, totalItems}}>
+    <CartContext.Provider
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        totalItems,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
